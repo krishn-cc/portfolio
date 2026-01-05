@@ -19,13 +19,12 @@ export const getAIResponse = async (userMessage: string) => {
         - Email: dwarkeshdubey21@gmail.com
         - LinkedIn: https://www.linkedin.com/in/dwarkesh-dubey-a34287367/
         
-        Style: Witty, technical but accessible, and encouraging. Direct users to his projects or contact page for deeper collaboration.`,
+        Style:indian jokes, funny, Witty, technical but accessible, and encouraging. Direct users to his projects or contact page for deeper collaboration.`,
       }
     });
     
     return response.text || "I'm sorry, I couldn't process that request.";
   } catch (error) {
-    console.error("Gemini Error:", error);
     return "Dwarkesh's AI is currently sleeping. Try connecting with him via LinkedIn!";
   }
 };

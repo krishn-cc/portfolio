@@ -1,25 +1,5 @@
 
-import React from 'react';
 import { Project, Skill } from './types';
-import { 
-  Code2, 
-  Database, 
-  Layout, 
-  Terminal, 
-  Globe, 
-  Cpu,
-  Shield,
-  Zap,
-  Github,
-  Server,
-  Layers,
-  Search,
-  Users,
-  Trophy,
-  Rocket,
-  Activity,
-  Terminal as Console
-} from 'lucide-react';
 
 export interface ProjectExtended extends Project {
   color: string;
@@ -85,15 +65,3 @@ export const SKILLS: Skill[] = [
   { name: "MongoDB", category: "Backend" },
   { name: "MySQL", category: "Backend" },
 ];
-
-export const SKILL_ICONS = {
-  Frontend: <Layout className="w-5 h-5 text-teal-400" />,
-  Backend: <Database className="w-5 h-5 text-blue-500" />,
-  Tools: <Zap className="w-5 h-5 text-sky-400" />,
-  Language: <Console className="w-5 h-5 text-teal-500" />,
-  Status: <Activity className="w-5 h-5 text-teal-300" />,
-  Learning: <Search className="w-5 h-5 text-slate-400" />,
-  Collaboration: <Users className="w-5 h-5 text-teal-600" />,
-  Expertise: <Trophy className="w-5 h-5 text-blue-400" />,
-  Launch: <Rocket className="w-5 h-5 text-white" />,
-};

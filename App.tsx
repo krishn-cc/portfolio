@@ -29,13 +29,13 @@ const CodingJourney: React.FC = () => {
   const smoothY = useSpring(y, springConfig);
 
   return (
-    <section id="journey" ref={containerRef} className="h-[140vh] relative z-10 bg-[#050505] perspective-3000 flex items-center justify-center overflow-hidden">
+    <section id="journey" ref={containerRef} className="min-h-screen sm:h-[140vh] relative z-10 bg-[#050505] perspective-3000 flex items-center justify-center overflow-hidden py-12 sm:py-0">
       {/* Huge Parallax Background Text */}
       <motion.div 
         style={{ x: textX, opacity: useTransform(scrollYProgress, [0.3, 0.5, 0.7], [0, 0.06, 0]) }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
       >
-        <span className="text-[35vw] font-black tracking-tighter uppercase text-white whitespace-nowrap leading-none">
+        <span className="text-[25vw] sm:text-[35vw] font-black tracking-tighter uppercase text-white whitespace-nowrap leading-none">
           TRAJECTORY
         </span>
       </motion.div>
@@ -49,21 +49,21 @@ const CodingJourney: React.FC = () => {
           y: smoothY,
           transformStyle: "preserve-3d"
         }}
-        className="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 md:gap-12 items-center"
       >
         {/* Metric Card */}
         <div className="lg:col-span-8 group relative" style={{ transformStyle: "preserve-3d" }}>
           <div className="absolute -inset-10 bg-teal-500/5 blur-[120px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-          <div className="relative rounded-[60px] overflow-hidden border border-white/10 bg-[#080808] p-1 shadow-[0_80px_150px_-20px_rgba(0,0,0,0.8)]">
-            <div className="p-8 md:p-16">
-               <div className="flex items-center gap-6 mb-12">
-                  <span className="text-teal-400 font-black text-xs uppercase tracking-[0.8em]">02 / METRICS</span>
-                  <div className="h-[1px] w-20 bg-white/10"></div>
+          <div className="relative rounded-[32px] sm:rounded-[48px] md:rounded-[60px] overflow-hidden border border-white/10 bg-[#080808] p-1 shadow-[0_80px_150px_-20px_rgba(0,0,0,0.8)]">
+            <div className="p-4 sm:p-6 md:p-8 lg:p-16">
+               <div className="flex items-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
+                  <span className="text-teal-400 font-black text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.4em] sm:tracking-[0.6em] md:tracking-[0.8em]">02 / METRICS</span>
+                  <div className="h-[1px] w-10 sm:w-16 md:w-20 bg-white/10"></div>
                </div>
-               <h4 className="text-5xl md:text-8xl font-bold mb-12 text-white tracking-tighter leading-none">Global <br/><span className="text-white/10">Contributions.</span></h4>
+               <h4 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-bold mb-6 sm:mb-8 md:mb-12 text-white tracking-tighter leading-none">Global <br/><span className="text-white/10">Contributions.</span></h4>
                <img 
                 src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=krishn-cc&theme=radical&cache_seconds=300" 
-                className="w-full h-auto rounded-[32px] grayscale hover:grayscale-0 transition-all duration-1000 opacity-60 hover:opacity-100" 
+                className="w-full h-auto rounded-[16px] sm:rounded-[24px] md:rounded-[32px] grayscale hover:grayscale-0 transition-all duration-1000 opacity-60 hover:opacity-100" 
                 alt="GitHub Stats"
               />
             </div>
@@ -71,19 +71,19 @@ const CodingJourney: React.FC = () => {
         </div>
 
         {/* Floating Detail Panel */}
-        <div className="lg:col-span-4 space-y-8" style={{ transformStyle: "preserve-3d", transform: "translateZ(50px)" }}>
+        <div className="lg:col-span-4 space-y-4 sm:space-y-6 md:space-y-8" style={{ transformStyle: "preserve-3d", transform: "translateZ(50px)" }}>
           <motion.div 
             whileHover={{ translateZ: 100, scale: 1.05 }}
-            className="p-12 rounded-[48px] bg-white/[0.02] backdrop-blur-3xl border border-white/5 shadow-2xl"
+            className="p-6 sm:p-8 md:p-10 lg:p-12 rounded-[32px] sm:rounded-[40px] md:rounded-[48px] bg-white/[0.02] backdrop-blur-3xl border border-white/5 shadow-2xl"
           >
-             <div className="w-16 h-16 rounded-[24px] bg-white flex items-center justify-center text-black font-black text-2xl mb-10">01</div>
-             <p className="text-3xl md:text-4xl font-bold text-white leading-tight tracking-tight">
+             <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] bg-white flex items-center justify-center text-black font-black text-xl sm:text-2xl mb-6 sm:mb-8 md:mb-10">01</div>
+             <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
                 "Solving <span className="text-teal-400 italic">architectural puzzles</span> with computational elegance."
              </p>
           </motion.div>
           
-          <div className="p-10 rounded-[48px] border border-white/5 bg-transparent">
-             <p className="text-white/20 text-lg font-medium leading-relaxed italic">
+          <div className="p-6 sm:p-8 md:p-10 rounded-[32px] sm:rounded-[40px] md:rounded-[48px] border border-white/5 bg-transparent">
+             <p className="text-white/20 text-sm sm:text-base md:text-lg font-medium leading-relaxed italic">
                Actively pushing the boundaries of what is possible in web architecture through consistent open-source iteration.
              </p>
           </div>
@@ -149,21 +149,21 @@ const App: React.FC = () => {
           </main>
           <ChatAssistant />
           
-          <footer className="relative z-30 py-32 px-6 border-t border-white/5 bg-black">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
-              <div className="md:col-span-2 space-y-12">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-white rounded-[24px] flex items-center justify-center font-black text-black text-3xl">D</div>
-                  <span className="text-4xl font-black tracking-tighter text-white">DWARKESH</span>
+          <footer className="relative z-30 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-white/5 bg-black">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 sm:gap-16 md:gap-20">
+              <div className="sm:col-span-2 space-y-8 sm:space-y-12">
+                <div className="flex items-center gap-3 sm:gap-4 md:gap-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-[20px] sm:rounded-[24px] flex items-center justify-center font-black text-black text-2xl sm:text-3xl">D</div>
+                  <span className="text-3xl sm:text-4xl font-black tracking-tighter text-white">DWARKESH</span>
                 </div>
-                <p className="text-white/30 max-w-md leading-relaxed text-xl font-medium">
+                <p className="text-white/30 max-w-md leading-relaxed text-base sm:text-lg md:text-xl font-medium">
                   Exploring the frontiers of Computer Science and AI. B.Tech 2nd Year CSE student at KL University.
                 </p>
               </div>
               
               <div>
-                <h5 className="font-black text-[10px] uppercase tracking-[0.4em] mb-12 text-teal-400">Navigation</h5>
-                <div className="flex flex-col gap-6 text-white/40 text-sm font-bold">
+                <h5 className="font-black text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-8 sm:mb-12 text-teal-400">Navigation</h5>
+                <div className="flex flex-col gap-4 sm:gap-6 text-white/40 text-sm font-bold">
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="#home">Home</motion.a>
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="#skills">Skills</motion.a>
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="#journey">Journey</motion.a>
@@ -172,15 +172,15 @@ const App: React.FC = () => {
               </div>
 
               <div>
-                <h5 className="font-black text-[10px] uppercase tracking-[0.4em] mb-12 text-teal-400">Ecosystem</h5>
-                <div className="flex flex-col gap-6 text-white/40 text-sm font-bold">
+                <h5 className="font-black text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-8 sm:mb-12 text-teal-400">Ecosystem</h5>
+                <div className="flex flex-col gap-4 sm:gap-6 text-white/40 text-sm font-bold">
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="https://github.com/krishn-cc" target="_blank">GitHub</motion.a>
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="https://www.linkedin.com/in/dwarkesh-dubey-a34287367/" target="_blank">LinkedIn</motion.a>
                   <motion.a whileHover={{ x: 10, color: '#2dd4bf' }} href="mailto:dwarkeshdubey21@gmail.com">Email</motion.a>
                 </div>
               </div>
             </div>
-            <div className="max-w-7xl mx-auto mt-32 pt-16 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-8 text-[9px] font-black uppercase tracking-[0.5em] text-white/10">
+            <div className="max-w-7xl mx-auto mt-16 sm:mt-24 md:mt-32 pt-12 sm:pt-16 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.4em] sm:tracking-[0.5em] text-white/10 text-center sm:text-left">
                <span>© {new Date().getFullYear()} DWARKESH DUBEY</span>
                <span className="text-teal-900 font-bold uppercase">Engineered in KL University • AP</span>
             </div>

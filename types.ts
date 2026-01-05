@@ -13,5 +13,3 @@ export interface Skill {
   category: 'Frontend' | 'Backend' | 'Tools' | 'Language';
   icon?: string;
 }
-
-export type NavItem = 'Home' | 'Skills' | 'Projects' | 'Contact';
