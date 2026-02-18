@@ -14,6 +14,7 @@ const EMAILJS_PUBLIC_KEY = 'YmuqYfbyWGO_86LxM'; // Your EmailJS public key
 const Contact: React.FC = () => {
   const containerRef = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -33,14 +34,14 @@ const Contact: React.FC = () => {
     offset: ["start end", "end start"]
   });
 
-  // 3D Transforms
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [25, 0, -25]);
-  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [0.7, 1.05, 1.05, 0.7]);
+  // 3D Transforms - disabled on mobile to prevent blinking
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0, 0, 0] : [25, 0, -25]);
+  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], isMobile ? [1, 1, 1, 1] : [0.7, 1.05, 1.05, 0.7]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [150, -150]);
-  const textX = useTransform(scrollYProgress, [0, 1], ['-40%', '40%']);
+  const y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [150, -150]);
+  const textX = useTransform(scrollYProgress, [0, 1], isMobile ? ['0%', '0%'] : ['-40%', '40%']);
 
-  const springConfig = { damping: 40, stiffness: 50, mass: 1 };
+  const springConfig = isMobile ? { damping: 50, stiffness: 100 } : { damping: 40, stiffness: 50, mass: 1 };
   const smoothRotateX = useSpring(rotateX, springConfig);
   const smoothScale = useSpring(scale, springConfig);
   const smoothY = useSpring(y, springConfig);
@@ -207,16 +208,16 @@ const Contact: React.FC = () => {
       {/* 3D Container */}
       <motion.div
         style={{ 
-          rotateX: smoothRotateX,
-          scale: smoothScale,
+          rotateX: isMobile ? 0 : smoothRotateX,
+          scale: isMobile ? 1 : smoothScale,
           opacity,
-          y: smoothY,
-          transformStyle: "preserve-3d"
+          y: isMobile ? 0 : smoothY,
+          transformStyle: isMobile ? "flat" : "preserve-3d"
         }}
         className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 lg:gap-20 items-center"
       >
         {/* Info Column */}
-        <div className="space-y-6 sm:space-y-10 md:space-y-12 lg:space-y-16" style={{ transformStyle: "preserve-3d" }}>
+        <div className="space-y-6 sm:space-y-10 md:space-y-12 lg:space-y-16" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
           <div>
             <h2 className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] sm:tracking-[0.6em] md:tracking-[1em] text-teal-400 mb-4 sm:mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6">
                <span className="w-6 sm:w-10 md:w-12 lg:w-16 h-[1px] bg-teal-400"></span>
@@ -242,7 +243,7 @@ const Contact: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                whileHover={item.href ? { x: 20, translateZ: 50, backgroundColor: 'rgba(45,212,191,0.05)' } : {}}
+                whileHover={item.href && !isMobile ? { x: 20, translateZ: 50, backgroundColor: 'rgba(45,212,191,0.05)' } : {}}
                 className={`flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 group p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all ${item.href ? 'cursor-pointer' : 'cursor-default'}`}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-[14px] sm:rounded-[16px] md:rounded-[20px] lg:rounded-[24px] bg-white/[0.05] border-2 border-white/10 flex items-center justify-center text-white/30 group-hover:text-teal-400 group-hover:border-teal-400/50 group-hover:bg-teal-400/10 transition-all duration-500 shadow-inner flex-shrink-0">
@@ -259,9 +260,9 @@ const Contact: React.FC = () => {
 
         {/* 3D Form Card - Communications Terminal */}
         <motion.div
-          style={{ transformStyle: "preserve-3d", transform: "translateZ(100px)" }}
+          style={{ transformStyle: isMobile ? "flat" : "preserve-3d", transform: isMobile ? "none" : "translateZ(100px)" }}
           className="relative group"
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: isMobile ? 20 : 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
@@ -356,7 +357,7 @@ const Contact: React.FC = () => {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                whileHover={!isSubmitting ? { scale: 1.02, translateZ: 50 } : {}}
+                whileHover={!isSubmitting && !isMobile ? { scale: 1.02, translateZ: 50 } : {}}
                 whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                 className="w-full bg-gradient-to-r from-teal-500 to-teal-400 text-black rounded-full py-4 sm:py-5 font-black text-[10px] sm:text-xs uppercase tracking-[0.4em] sm:tracking-[0.5em] flex items-center justify-center gap-3 sm:gap-4 group shadow-[0_0_40px_rgba(45,212,191,0.3)] hover:shadow-[0_0_60px_rgba(45,212,191,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-500"
               >

@@ -90,24 +90,24 @@ const ScrollProgressIndicator: React.FC = () => {
 
 const CodingJourney: React.FC = () => {
   const containerRef = useRef(null);
-  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  // Wormhole depth effect
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [35, 0, -35]);
-  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [0.6, 1.1, 1.1, 0.6]);
+  // Wormhole depth effect - disabled on mobile to prevent blinking
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0, 0, 0] : [35, 0, -35]);
+  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], isMobile ? [1, 1, 1, 1] : [0.6, 1.1, 1.1, 0.6]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [200, -200]);
+  const y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [200, -200]);
   
-  // Spiral wormhole text movement
-  const textX = useTransform(scrollYProgress, [0, 1], ['20%', '-20%']);
-  const textRotate = useTransform(scrollYProgress, [0, 1], [0, -15]);
+  // Spiral wormhole text movement - reduced on mobile
+  const textX = useTransform(scrollYProgress, [0, 1], isMobile ? ['0%', '0%'] : ['20%', '-20%']);
+  const textRotate = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -15]);
 
-  const springConfig = { damping: 40, stiffness: 50, mass: 1.2 };
+  const springConfig = isMobile ? { damping: 50, stiffness: 100 } : { damping: 40, stiffness: 50, mass: 1.2 };
   const smoothRotateX = useSpring(rotateX, springConfig);
   const smoothScale = useSpring(scale, springConfig);
   const smoothY = useSpring(y, springConfig);
@@ -162,11 +162,11 @@ const CodingJourney: React.FC = () => {
       {/* 3D Timeline Container */}
       <motion.div
         style={{ 
-          rotateX: smoothRotateX,
-          scale: smoothScale,
+          rotateX: isMobile ? 0 : smoothRotateX,
+          scale: isMobile ? 1 : smoothScale,
           opacity,
-          y: smoothY,
-          transformStyle: "preserve-3d"
+          y: isMobile ? 0 : smoothY,
+          transformStyle: isMobile ? "flat" : "preserve-3d"
         }}
         className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6"
       >
@@ -191,7 +191,7 @@ const CodingJourney: React.FC = () => {
           {/* Glowing Central Line - Wormhole Core */}
           <div className="absolute left-[20px] sm:left-[50%] top-0 bottom-0 w-[2px] sm:translate-x-[-1px]">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400 to-transparent opacity-40"></div>
-            <div className="absolute inset-0 bg-purple-400/30 blur-sm animate-pulse"></div>
+            <div className={`absolute inset-0 bg-purple-400/30 blur-sm ${isMobile ? '' : 'animate-pulse'}`}></div>
             {/* Energy pulses */}
             <motion.div
               className="absolute w-full h-8 bg-gradient-to-b from-purple-400/50 to-transparent blur-md"
@@ -210,24 +210,24 @@ const CodingJourney: React.FC = () => {
           <div className="space-y-12 sm:space-y-20 md:space-y-24">
             {/* B.Tech - Current */}
             <motion.div
-              initial={{ opacity: 0, x: -50, scale: 0.8 }}
+              initial={{ opacity: 0, x: -50, scale: isMobile ? 1 : 0.8 }}
               whileInView={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.1, type: "spring" }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1, type: isMobile ? "tween" : "spring" }}
+              viewport={{ once: true, margin: "-50px" }}
               className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
             >
               {/* Waypoint Marker */}
               <div className="absolute left-[11px] md:left-[50%] md:translate-x-[-50%] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] md:w-[18px] md:h-[18px] rounded-full bg-teal-400 shadow-[0_0_30px_rgba(45,212,191,0.8)] sm:shadow-[0_0_40px_rgba(45,212,191,0.9)] z-10">
-                <div className="absolute inset-0 rounded-full bg-teal-400 animate-ping opacity-75"></div>
+                <div className={`absolute inset-0 rounded-full bg-teal-400 ${isMobile ? '' : 'animate-ping'} opacity-75`}></div>
                 <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-teal-400/30"></div>
               </div>
 
               {/* Content Card */}
               <div className="md:col-start-2 md:col-span-1">
                 <motion.div
-                  whileHover={{ scale: 1.03, translateZ: 100 }}
-                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-teal-950/40 via-teal-950/20 to-transparent backdrop-blur-2xl border border-teal-400/30 shadow-[0_20px_80px_-15px_rgba(45,212,191,0.4)]"
-                  style={{ transformStyle: "preserve-3d" }}
+                  whileHover={isMobile ? {} : { scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-teal-950/40 via-teal-950/20 to-transparent backdrop-blur-xl border border-teal-400/30 shadow-[0_20px_80px_-15px_rgba(45,212,191,0.4)]"
+                  style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
                 >
                   <div className="absolute -inset-1 bg-gradient-to-r from-teal-400/30 to-blue-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                   <div className="relative">
@@ -260,10 +260,10 @@ const CodingJourney: React.FC = () => {
 
             {/* 12th Grade */}
             <motion.div
-              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              initial={{ opacity: 0, x: 50, scale: isMobile ? 1 : 0.8 }}
               whileInView={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, type: "spring" }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.15, type: isMobile ? "tween" : "spring" }}
+              viewport={{ once: true, margin: "-50px" }}
               className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
             >
               {/* Waypoint Marker */}
@@ -274,9 +274,9 @@ const CodingJourney: React.FC = () => {
               {/* Content Card */}
               <div className="md:col-start-1 md:col-span-1">
                 <motion.div
-                  whileHover={{ scale: 1.03, translateZ: 100 }}
-                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-blue-950/40 via-blue-950/20 to-transparent backdrop-blur-2xl border border-blue-400/30 shadow-[0_20px_80px_-15px_rgba(96,165,250,0.3)]"
-                  style={{ transformStyle: "preserve-3d" }}
+                  whileHover={isMobile ? {} : { scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-blue-950/40 via-blue-950/20 to-transparent backdrop-blur-xl border border-blue-400/30 shadow-[0_20px_80px_-15px_rgba(96,165,250,0.3)]"
+                  style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
                 >
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                   <div className="relative">
@@ -309,10 +309,10 @@ const CodingJourney: React.FC = () => {
 
             {/* 10th Grade */}
             <motion.div
-              initial={{ opacity: 0, x: -50, scale: 0.8 }}
+              initial={{ opacity: 0, x: -50, scale: isMobile ? 1 : 0.8 }}
               whileInView={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2, type: isMobile ? "tween" : "spring" }}
+              viewport={{ once: true, margin: "-50px" }}
               className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
             >
               {/* Waypoint Marker */}
@@ -323,9 +323,9 @@ const CodingJourney: React.FC = () => {
               {/* Content Card */}
               <div className="md:col-start-2 md:col-span-1">
                 <motion.div
-                  whileHover={{ scale: 1.03, translateZ: 100 }}
-                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-purple-950/40 via-purple-950/20 to-transparent backdrop-blur-2xl border border-purple-400/30 shadow-[0_20px_80px_-15px_rgba(192,132,252,0.3)]"
-                  style={{ transformStyle: "preserve-3d" }}
+                  whileHover={isMobile ? {} : { scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-purple-950/40 via-purple-950/20 to-transparent backdrop-blur-xl border border-purple-400/30 shadow-[0_20px_80px_-15px_rgba(192,132,252,0.3)]"
+                  style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
                 >
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                   <div className="relative">

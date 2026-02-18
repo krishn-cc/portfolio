@@ -7,19 +7,20 @@ import { NebulaCloud } from '../utils/cosmicEffects.tsx';
 
 const ProjectCard = React.memo(({ project, index }: { project: any, index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const isFeatured = project.featured;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, rotateX: -10 }}
+      initial={{ opacity: 0, y: isMobile ? 20 : 50, rotateX: isMobile ? 0 : -10 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ 
-        delay: index * 0.15, 
+        delay: index * (isMobile ? 0.1 : 0.15), 
         duration: 0.7,
         ease: [0.25, 0.1, 0.25, 1]
       }}
-      whileHover={{ 
+      whileHover={isMobile ? {} : { 
         y: -12,
         transition: { duration: 0.3 }
       }}
@@ -40,7 +41,7 @@ const ProjectCard = React.memo(({ project, index }: { project: any, index: numbe
         {/* Background image with parallax */}
         <motion.div 
           className="absolute inset-0 overflow-hidden"
-          animate={isHovered ? { scale: 1.1 } : { scale: 1 }}
+          animate={isHovered && !isMobile ? { scale: 1.1 } : { scale: 1 }}
           transition={{ duration: 0.6 }}
         >
           <img
@@ -54,14 +55,16 @@ const ProjectCard = React.memo(({ project, index }: { project: any, index: numbe
             className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40 group-hover:from-black/95 group-hover:via-black/70 transition-all duration-500"
           />
           
-          {/* Animated scan lines */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <motion.div 
-              className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-400/5 to-transparent h-32"
-              animate={{ y: ['-100%', '200%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            />
-          </div>
+          {/* Animated scan lines - disabled on mobile */}
+          {!isMobile && (
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-400/5 to-transparent h-32"
+                animate={{ y: ['-100%', '200%'] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+          )}
         </motion.div>
 
         {/* Corner brackets */}
