@@ -380,7 +380,7 @@ export const Planet: React.FC<{
 export const ShootingStar: React.FC = React.memo(() => {
   // Optimize for mobile - fewer shooting stars
   const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
-  const starCount = isMobile ? 3 : 5;
+  const starCount = isMobile ? 1 : 2;
   
   const stars = React.useMemo(() => 
     Array.from({ length: starCount }, (_, i) => ({
@@ -414,7 +414,7 @@ export const ShootingStar: React.FC = React.memo(() => {
             duration: 1.5,
             repeat: Infinity,
             delay: star.delay,
-            repeatDelay: 5,
+            repeatDelay: 8,
             ease: "easeOut"
           }}
         >

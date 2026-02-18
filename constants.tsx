@@ -104,3 +104,4 @@ export const SKILLS: Skill[] = [
   // { name: "MongoDB", category: "Backend" },
   { name: "MySQL", category: "Backend" },
 ];
+``

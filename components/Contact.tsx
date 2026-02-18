@@ -72,21 +72,32 @@ const Contact: React.FC = () => {
     }
   ];
 
-  // Handle form input changes - optimized to prevent re-renders
+  // Handle form input changes - heavily optimized to prevent lag
   const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    // Use requestAnimationFrame to debounce state updates
+    requestAnimationFrame(() => {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    });
   }, []);
 
-  // Handle form submission - optimized
+  // Handle form submission - optimized with form data extraction
   const handleSubmit = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    // Get values directly from form
+    const form = e.currentTarget;
+    const formValues = {
+      name: (form.elements.namedItem('name') as HTMLInputElement).value,
+      email: (form.elements.namedItem('email') as HTMLInputElement).value,
+      message: (form.elements.namedItem('message') as HTMLTextAreaElement).value
+    };
+    
     // Validate form
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formValues.name || !formValues.email || !formValues.message) {
       setSubmitStatus({
         type: 'error',
         message: 'Please fill in all fields'
@@ -106,9 +117,9 @@ const Contact: React.FC = () => {
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID_FEEDBACK,
         {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
+          from_name: formValues.name,
+          from_email: formValues.email,
+          message: formValues.message,
           to_email: 'dwarkeshdubey21@gmail.com' // Your email
         },
         EMAILJS_PUBLIC_KEY
@@ -119,8 +130,8 @@ const Contact: React.FC = () => {
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID_THANKYOU,
         {
-          to_name: formData.name,
-          to_email: formData.email,
+          to_name: formValues.name,
+          to_email: formValues.email,
           from_name: 'Dwarkesh Dubey'
         },
         EMAILJS_PUBLIC_KEY
@@ -133,6 +144,7 @@ const Contact: React.FC = () => {
       });
       
       // Reset form
+      form.reset();
       setFormData({
         name: '',
         email: '',
@@ -153,7 +165,7 @@ const Contact: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData]);
+  }, []);
 
   return (
     <section id="contact" ref={containerRef} className="min-h-screen sm:h-[140vh] relative z-10 bg-black perspective-3000 flex items-center justify-center overflow-hidden py-16 sm:py-20 md:py-0">
@@ -294,12 +306,12 @@ const Contact: React.FC = () => {
                   <input 
                     type="text"
                     name="name"
-                    value={formData.name}
+                    defaultValue={formData.name}
                     onChange={handleChange}
                     placeholder="John Doe"
                     required
                     disabled={isSubmitting}
-                    className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-all text-white font-medium placeholder:text-white/20 text-sm disabled:opacity-50 touch-manipulation"
+                    className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-colors text-white font-medium placeholder:text-white/20 text-sm disabled:opacity-50"
                   />
                 </div>
                 <div className="space-y-2 sm:space-y-3">
@@ -307,12 +319,12 @@ const Contact: React.FC = () => {
                   <input 
                     type="email"
                     name="email"
-                    value={formData.email}
+                    defaultValue={formData.email}
                     onChange={handleChange}
                     placeholder="john@example.com"
                     required
                     disabled={isSubmitting}
-                    className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-all text-white font-medium placeholder:text-white/20 text-sm disabled:opacity-50 touch-manipulation"
+                    className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-colors text-white font-medium placeholder:text-white/20 text-sm disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -321,13 +333,13 @@ const Contact: React.FC = () => {
                 <label className="text-[8px] sm:text-[10px] font-black text-teal-400/50 uppercase tracking-[0.3em] sm:tracking-[0.4em] ml-3 sm:ml-4">Transmission Content</label>
                 <textarea
                   name="message"
-                  value={formData.message}
+                  defaultValue={formData.message}
                   onChange={handleChange}
                   rows={5}
                   placeholder="Encode your message..."
                   required
                   disabled={isSubmitting}
-                  className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[20px] sm:rounded-[24px] md:rounded-[28px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-all text-white font-medium resize-none placeholder:text-white/20 leading-relaxed disabled:opacity-50 touch-manipulation"
+                  className="w-full bg-white/[0.05] border-2 border-white/10 rounded-[20px] sm:rounded-[24px] md:rounded-[28px] px-4 sm:px-5 py-3.5 sm:py-4 outline-none focus:border-teal-400/50 focus:bg-teal-400/5 transition-colors text-white font-medium resize-none placeholder:text-white/20 leading-relaxed disabled:opacity-50"
                 ></textarea>
               </div>
 
