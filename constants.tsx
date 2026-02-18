@@ -7,6 +7,34 @@ export interface ProjectExtended extends Project {
   tagline: string;
 }
 
+// Cosmic theme configurations for planets/dimensions - Unified teal theme
+export const COSMIC_THEMES = {
+  frontend: {
+    name: 'Frontend',
+    planetColor: '#2dd4bf', // Teal-400
+    glowColor: 'rgba(45, 212, 191, 0.6)',
+    nebulaColors: ['#14b8a6', '#2dd4bf', '#5eead4'],
+    type: 'nebula' as const,
+    constellation: 'INTERFACE'
+  },
+  backend: {
+    name: 'Backend',
+    planetColor: '#2dd4bf', // Teal-400
+    glowColor: 'rgba(45, 212, 191, 0.6)',
+    nebulaColors: ['#14b8a6', '#2dd4bf', '#5eead4'],
+    type: 'tech' as const,
+    constellation: 'SYSTEMS'
+  },
+  language: {
+    name: 'Language',
+    planetColor: '#2dd4bf', // Teal-400
+    glowColor: 'rgba(45, 212, 191, 0.6)',
+    nebulaColors: ['#14b8a6', '#2dd4bf', '#5eead4'],
+    type: 'crystal' as const,
+    constellation: 'SYNTAX'
+  }
+};
+
 export const DWARKESH_STATUS = {
     role: "B.Tech CSE Student & Aspiring AI Generalist",
     currentlyWorking: "Full-Stack Web Applications & ML Projects",
@@ -47,7 +75,18 @@ export const PROJECTS: ProjectExtended[] = [
     color: "#ef4444",
     glowColor: "rgba(239, 68, 68, 0.4)",
     featured: true
-  }
+  },
+  {
+    title: "QRAVEN",
+    tagline: "Smart QR Code Management",
+    description: "Dynamic QR code generation and management platform with analytics tracking. Create, customize, and monitor QR codes for events, marketing campaigns, and digital experiences.",
+    tech: ["React", "Next.js", "TypeScript", "Analytics"],
+    link: "https://github.com/krishn-org/qraven",
+    image: "/QRAVEN.png",
+    color: "#8b5cf6",
+    glowColor: "rgba(139, 92, 246, 0.4)"
+  },
+ 
 ];
 
 export const SKILLS: Skill[] = [
@@ -62,6 +101,6 @@ export const SKILLS: Skill[] = [
   { name: "Node.js", category: "Backend" },
   { name: "Express.js", category: "Backend" },
   { name: "Supabase", category: "Backend" },
-  { name: "MongoDB", category: "Backend" },
+  // { name: "MongoDB", category: "Backend" },
   { name: "MySQL", category: "Backend" },
 ];

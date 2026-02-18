@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Dwarkesh Dubey | Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,11 +13,18 @@
       html {
         scroll-behavior: smooth;
       }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      html, body {
+        width: 100%;
+        overflow-x: hidden;
+      }
       body {
         font-family: 'Inter', sans-serif;
         background-color: #050505;
         color: #ffffff;
-        overflow-x: hidden;
+        position: relative;
       }
       h1, h2, h3, .font-heading {
         font-family: 'Outfit', sans-serif;
@@ -45,6 +52,50 @@
       }
       .mask-gradient {
         mask-image: linear-gradient(to bottom, black 80%, transparent);
+      }
+      @keyframes gradient {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 15s ease infinite;
+      }
+      
+      /* Mobile optimizations */
+      @media (max-width: 640px) {
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        * {
+          -webkit-tap-highlight-color: rgba(45, 212, 191, 0.15);
+        }
+        input, textarea, button, select {
+          font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+      }
+      
+      /* Fix for viewport height on mobile browsers */
+      @supports (-webkit-touch-callout: none) {
+        .h-screen {
+          height: -webkit-fill-available;
+        }
+      }
+      
+      /* GPU acceleration for better performance */
+      * {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+      
+      /* Disable hover effects on touch devices */
+      @media (hover: none) {
+        *:hover {
+          transform: none !important;
+        }
       }
     </style>
 <script type="importmap">

@@ -9,19 +9,103 @@ import Contact from './components/Contact.tsx';
 import BackgroundEffect from './components/BackgroundEffect.tsx';
 import ChatAssistant from './components/ChatAssistant.tsx';
 
-const CodingJourney: React.FC = () => {
+// Scroll Transition Effect - Star Warp between sections
+const StarWarpTransition: React.FC<{ sectionName: string }> = ({ sectionName }) => {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  // 3D Transforms for the Journey Monolith
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -30]);
-  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [0.8, 1.05, 1.05, 0.8]);
+  const opacity = useTransform(scrollYProgress, [0.4, 0.5, 0.6], [0, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0.4, 0.5, 0.6], [0.8, 1.5, 0.8]);
+  
+  // Reduce number of lines on mobile
+  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  const lineCount = isMobile ? 8 : 15;
+
+  return (
+    <div ref={containerRef} className="relative h-20 sm:h-32 md:h-48 -my-10 sm:-my-16 md:-my-24 pointer-events-none z-40">
+      <motion.div
+        style={{ opacity, scale }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        {/* Star warp lines */}
+        {[...Array(lineCount)].map((_, i) => {
+          const angle = (i / lineCount) * Math.PI * 2;
+          const distance = 40 + (i % 3) * 20;
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-0.5 sm:w-1 bg-gradient-to-r from-transparent via-teal-400 to-transparent rounded-full"
+              style={{
+                height: `${30 + (i % 4) * 20}px`,
+                left: '50%',
+                top: '50%',
+                transformOrigin: 'center',
+              }}
+              animate={{
+                rotate: [(angle * 180) / Math.PI, (angle * 180) / Math.PI],
+                scaleY: [0, 2, 0],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                delay: i * 0.05,
+                ease: 'easeInOut',
+              }}
+            />
+          );
+        })}
+        
+        {/* Section label */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-full bg-black/80 backdrop-blur-xl border border-teal-400/30"
+        >
+          <span className="text-teal-400 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em]">
+            {sectionName}
+          </span>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+// Scroll Progress Indicator
+const ScrollProgressIndicator: React.FC = () => {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { damping: 50, stiffness: 300 });
+
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-purple-400 to-teal-400 origin-left z-[70] shadow-[0_0_20px_rgba(45,212,191,0.6)]"
+      style={{ scaleX }}
+    />
+  );
+};
+
+const CodingJourney: React.FC = () => {
+  const containerRef = useRef(null);
+  const [isMobile] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Wormhole depth effect
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [35, 0, -35]);
+  const scale = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [0.6, 1.1, 1.1, 0.6]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [150, -150]);
+  const y = useTransform(scrollYProgress, [0, 1], [200, -200]);
+  
+  // Spiral wormhole text movement
   const textX = useTransform(scrollYProgress, [0, 1], ['20%', '-20%']);
+  const textRotate = useTransform(scrollYProgress, [0, 1], [0, -15]);
 
   const springConfig = { damping: 40, stiffness: 50, mass: 1.2 };
   const smoothRotateX = useSpring(rotateX, springConfig);
@@ -29,18 +113,53 @@ const CodingJourney: React.FC = () => {
   const smoothY = useSpring(y, springConfig);
 
   return (
-    <section id="journey" ref={containerRef} className="min-h-screen sm:h-[140vh] relative z-10 bg-[#050505] perspective-3000 flex items-center justify-center overflow-hidden py-12 sm:py-0">
+    <section id="journey" ref={containerRef} className="min-h-screen sm:h-[180vh] relative z-10 bg-[#050505] perspective-3000 flex items-center justify-center overflow-hidden py-16 sm:py-20 md:py-0">
+      {/* Wormhole Spiral Background */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          opacity: useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0, 0.15, 0])
+        }}
+      >
+        {/* Concentric rings creating tunnel effect - fewer on mobile */}
+        {[...Array(isMobile ? 3 : 5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-purple-500/10"
+            style={{
+              width: `${(i + 1) * 100}px`,
+              height: `${(i + 1) * 100}px`,
+              opacity: 0.3 - i * 0.03
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.3 - i * 0.03, 0.15 - i * 0.02, 0.3 - i * 0.03]
+            }}
+            transition={{
+              duration: 4 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.2
+            }}
+          />
+        ))}
+      </motion.div>
+      
       {/* Huge Parallax Background Text */}
       <motion.div 
-        style={{ x: textX, opacity: useTransform(scrollYProgress, [0.3, 0.5, 0.7], [0, 0.06, 0]) }}
+        style={{ 
+          x: textX, 
+          rotate: textRotate,
+          opacity: useTransform(scrollYProgress, [0.3, 0.5, 0.7], [0, 0.06, 0]) 
+        }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
       >
-        <span className="text-[25vw] sm:text-[35vw] font-black tracking-tighter uppercase text-white whitespace-nowrap leading-none">
-          TRAJECTORY
+        <span className="text-[35vw] sm:text-[38vw] md:text-[40vw] font-black tracking-tighter uppercase text-white whitespace-nowrap leading-none">
+          TIMELINE
         </span>
       </motion.div>
 
-      {/* 3D Content Container */}
+      {/* 3D Timeline Container */}
       <motion.div
         style={{ 
           rotateX: smoothRotateX,
@@ -49,43 +168,193 @@ const CodingJourney: React.FC = () => {
           y: smoothY,
           transformStyle: "preserve-3d"
         }}
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 md:gap-12 items-center"
+        className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6"
       >
-        {/* Metric Card */}
-        <div className="lg:col-span-8 group relative" style={{ transformStyle: "preserve-3d" }}>
-          <div className="absolute -inset-10 bg-teal-500/5 blur-[120px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-          <div className="relative rounded-[32px] sm:rounded-[48px] md:rounded-[60px] overflow-hidden border border-white/10 bg-[#080808] p-1 shadow-[0_80px_150px_-20px_rgba(0,0,0,0.8)]">
-            <div className="p-4 sm:p-6 md:p-8 lg:p-16">
-               <div className="flex items-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
-                  <span className="text-teal-400 font-black text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.4em] sm:tracking-[0.6em] md:tracking-[0.8em]">02 / METRICS</span>
-                  <div className="h-[1px] w-10 sm:w-16 md:w-20 bg-white/10"></div>
-               </div>
-               <h4 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-bold mb-6 sm:mb-8 md:mb-12 text-white tracking-tighter leading-none">Global <br/><span className="text-white/10">Contributions.</span></h4>
-               <img 
-                src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=krishn-cc&theme=radical&cache_seconds=300" 
-                className="w-full h-auto rounded-[16px] sm:rounded-[24px] md:rounded-[32px] grayscale hover:grayscale-0 transition-all duration-1000 opacity-60 hover:opacity-100" 
-                alt="GitHub Stats"
-              />
-            </div>
-          </div>
+        {/* Section Header */}
+        <div className="text-center mb-10 sm:mb-16 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6"
+          >
+            <span className="text-purple-400 font-black text-[10px] uppercase tracking-[0.4em] sm:tracking-[0.6em]">Wormhole Passage</span>
+            <div className="h-[1px] w-10 sm:w-12 md:w-16 bg-purple-400/30"></div>
+          </motion.div>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter">
+            Educational <span className="text-purple-400">Path</span>
+          </h2>
         </div>
 
-        {/* Floating Detail Panel */}
-        <div className="lg:col-span-4 space-y-4 sm:space-y-6 md:space-y-8" style={{ transformStyle: "preserve-3d", transform: "translateZ(50px)" }}>
-          <motion.div 
-            whileHover={{ translateZ: 100, scale: 1.05 }}
-            className="p-6 sm:p-8 md:p-10 lg:p-12 rounded-[32px] sm:rounded-[40px] md:rounded-[48px] bg-white/[0.02] backdrop-blur-3xl border border-white/5 shadow-2xl"
-          >
-             <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-[16px] sm:rounded-[20px] md:rounded-[24px] bg-white flex items-center justify-center text-black font-black text-xl sm:text-2xl mb-6 sm:mb-8 md:mb-10">01</div>
-             <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
-                "Solving <span className="text-teal-400 italic">architectural puzzles</span> with computational elegance."
-             </p>
-          </motion.div>
-          
-          <div className="p-6 sm:p-8 md:p-10 rounded-[32px] sm:rounded-[40px] md:rounded-[48px] border border-white/5 bg-transparent">
-             <p className="text-white/20 text-sm sm:text-base md:text-lg font-medium leading-relaxed italic">
-               Actively pushing the boundaries of what is possible in web architecture through consistent open-source iteration.
-             </p>
+        {/* 3D Wormhole Timeline */}
+        <div className="relative">
+          {/* Glowing Central Line - Wormhole Core */}
+          <div className="absolute left-[20px] sm:left-[50%] top-0 bottom-0 w-[2px] sm:translate-x-[-1px]">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400 to-transparent opacity-40"></div>
+            <div className="absolute inset-0 bg-purple-400/30 blur-sm animate-pulse"></div>
+            {/* Energy pulses */}
+            <motion.div
+              className="absolute w-full h-8 bg-gradient-to-b from-purple-400/50 to-transparent blur-md"
+              animate={{
+                y: ["0%", "100%"]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          </div>
+
+          {/* Timeline Items */}
+          <div className="space-y-12 sm:space-y-20 md:space-y-24">
+            {/* B.Tech - Current */}
+            <motion.div
+              initial={{ opacity: 0, x: -50, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.1, type: "spring" }}
+              viewport={{ once: true }}
+              className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
+            >
+              {/* Waypoint Marker */}
+              <div className="absolute left-[11px] md:left-[50%] md:translate-x-[-50%] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] md:w-[18px] md:h-[18px] rounded-full bg-teal-400 shadow-[0_0_30px_rgba(45,212,191,0.8)] sm:shadow-[0_0_40px_rgba(45,212,191,0.9)] z-10">
+                <div className="absolute inset-0 rounded-full bg-teal-400 animate-ping opacity-75"></div>
+                <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-teal-400/30"></div>
+              </div>
+
+              {/* Content Card */}
+              <div className="md:col-start-2 md:col-span-1">
+                <motion.div
+                  whileHover={{ scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-teal-950/40 via-teal-950/20 to-transparent backdrop-blur-2xl border border-teal-400/30 shadow-[0_20px_80px_-15px_rgba(45,212,191,0.4)]"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-teal-400/30 to-blue-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center font-black text-black text-sm sm:text-base shadow-lg">
+                        BT
+                      </div>
+                      <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-teal-400/20 border border-teal-400/50 text-teal-300 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                        ◉ Active
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">
+                      Bachelor of Technology
+                    </h3>
+                    <p className="text-white/70 font-bold mb-2 sm:mb-3 text-sm sm:text-base">Computer Science & Engineering</p>
+                    <p className="text-white/50 text-xs sm:text-sm mb-3 sm:mb-4">KL University, Hyderabad</p>
+                    <div className="flex items-center gap-2 text-teal-400 font-black text-xs sm:text-sm">
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-teal-400 animate-pulse"></div>
+                      <span>2024 - 2028</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Year Label (Desktop) */}
+              <div className="hidden md:block md:col-start-1 md:col-span-1 text-right">
+                <span className="text-6xl lg:text-7xl font-black text-white/5 tracking-tighter">2024</span>
+              </div>
+            </motion.div>
+
+            {/* 12th Grade */}
+            <motion.div
+              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2, type: "spring" }}
+              viewport={{ once: true }}
+              className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
+            >
+              {/* Waypoint Marker */}
+              <div className="absolute left-[11px] md:left-[50%] md:translate-x-[-50%] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] md:w-[18px] md:h-[18px] rounded-full bg-blue-400 shadow-[0_0_25px_rgba(96,165,250,0.6)] sm:shadow-[0_0_35px_rgba(96,165,250,0.7)] z-10">
+                <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-blue-400/30"></div>
+              </div>
+
+              {/* Content Card */}
+              <div className="md:col-start-1 md:col-span-1">
+                <motion.div
+                  whileHover={{ scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-blue-950/40 via-blue-950/20 to-transparent backdrop-blur-2xl border border-blue-400/30 shadow-[0_20px_80px_-15px_rgba(96,165,250,0.3)]"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center font-black text-black text-sm sm:text-base shadow-lg">
+                        12
+                      </div>
+                      <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-blue-400/20 border border-blue-400/50 text-blue-300 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                        Completed
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">
+                      Higher Secondary
+                    </h3>
+                    <p className="text-white/70 font-bold mb-2 sm:mb-3 text-sm sm:text-base">Science Stream</p>
+                    <p className="text-white/50 text-xs sm:text-sm mb-3 sm:mb-4">Sri Chaitanya Educational Institutions</p>
+                    <div className="flex items-center gap-2 text-blue-400 font-black text-xs sm:text-sm">
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-400"></div>
+                      <span>2022 - 2024</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Year Label (Desktop) */}
+              <div className="hidden md:block md:col-start-2 md:col-span-1">
+                <span className="text-6xl lg:text-7xl font-black text-white/5 tracking-tighter">2022</span>
+              </div>
+            </motion.div>
+
+            {/* 10th Grade */}
+            <motion.div
+              initial={{ opacity: 0, x: -50, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
+              viewport={{ once: true }}
+              className="relative pl-12 sm:pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-8 lg:gap-12 items-center group"
+            >
+              {/* Waypoint Marker */}
+              <div className="absolute left-[11px] md:left-[50%] md:translate-x-[-50%] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] md:w-[18px] md:h-[18px] rounded-full bg-purple-400 shadow-[0_0_25px_rgba(192,132,252,0.6)] sm:shadow-[0_0_35px_rgba(192,132,252,0.7)] z-10">
+                <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-purple-400/30"></div>
+              </div>
+
+              {/* Content Card */}
+              <div className="md:col-start-2 md:col-span-1">
+                <motion.div
+                  whileHover={{ scale: 1.03, translateZ: 100 }}
+                  className="relative p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] bg-gradient-to-br from-purple-950/40 via-purple-950/20 to-transparent backdrop-blur-2xl border border-purple-400/30 shadow-[0_20px_80px_-15px_rgba(192,132,252,0.3)]"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-[24px] sm:rounded-[28px] md:rounded-[32px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-400 to-purple-500 flex items-center justify-center font-black text-black text-sm sm:text-base shadow-lg">
+                        10
+                      </div>
+                      <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-purple-400/20 border border-purple-400/50 text-purple-300 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                        Completed
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">
+                      Secondary School
+                    </h3>
+                    <p className="text-white/70 font-bold mb-2 sm:mb-3 text-sm sm:text-base">CBSE Board</p>
+                    <p className="text-white/50 text-xs sm:text-sm mb-3 sm:mb-4">Phoenix Greens School of Learning</p>
+                    <div className="flex items-center gap-2 text-purple-400 font-black text-xs sm:text-sm">
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-purple-400"></div>
+                      <span>2016 - 2022</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Year Label (Desktop) */}
+              <div className="hidden md:block md:col-start-1 md:col-span-1 text-right">
+                <span className="text-6xl lg:text-7xl font-black text-white/5 tracking-tighter">2021</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </motion.div>
@@ -102,7 +371,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#050505]">
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden">
       <AnimatePresence>
         {loading ? (
           <motion.div
@@ -136,14 +405,31 @@ const App: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
+          <ScrollProgressIndicator />
           <BackgroundEffect />
           <Navbar />
           <main className="relative">
             <Hero />
+            
+            {/* Star Warp Transition to Skills */}
+            <StarWarpTransition sectionName="Entering Sector Zone" />
+            
             <div className="relative z-30 bg-[#050505] -mt-[2px]">
               <Skills />
+              
+              {/* Star Warp Transition to Journey */}
+              <StarWarpTransition sectionName="Timeline Portal" />
+              
               <CodingJourney />
+              
+              {/* Star Warp Transition to Projects */}
+              <StarWarpTransition sectionName="Station Approach" />
+              
               <Projects />
+              
+              {/* Star Warp Transition to Contact */}
+              <StarWarpTransition sectionName="Comms Channel" />
+              
               <Contact />
             </div>
           </main>
