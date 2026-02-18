@@ -25,7 +25,7 @@ const Hero: React.FC = React.memo(() => {
   const starOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0]);
 
   return (
-    <div ref={containerRef} className="h-[120vh] sm:h-[140vh] relative z-20">
+    <div ref={containerRef} className="h-[200vh] sm:h-[250vh] relative z-20">
       <section id="home" className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         
         {/* Animated Starfield Background */}

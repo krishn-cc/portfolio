@@ -317,12 +317,7 @@ const Projects: React.FC = () => {
           viewport={{ once: true }}
           className="mt-20 text-center"
         >
-          <a 
-            href="https://github.com/krishn-cc" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-4 px-8 py-4 rounded-full border-2 border-teal-400/30 bg-gradient-to-r from-black/80 via-teal-950/20 to-black/80 backdrop-blur-xl hover:border-teal-400/60 hover:shadow-[0_0_30px_rgba(45,212,191,0.3)] transition-all duration-300"
-          >
+          <div className="inline-flex items-center gap-4 px-8 py-4 rounded-full border-2 border-teal-400/30 bg-gradient-to-r from-black/80 via-teal-950/20 to-black/80 backdrop-blur-xl">
             <Code2 className="w-5 h-5 text-teal-400" />
             <span className="text-white/60 font-bold text-sm uppercase tracking-wider">
               More Projects on GitHub
@@ -333,7 +328,7 @@ const Projects: React.FC = () => {
             >
               <ExternalLink className="w-4 h-4 text-teal-400" />
             </motion.div>
-          </a>
+          </div>
         </motion.div>
       </motion.div>
     </section>
